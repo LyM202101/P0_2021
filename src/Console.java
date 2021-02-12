@@ -2,8 +2,14 @@ import Controller.Interpreter;
 import Controller.Lexer;
 import HelperClases.PairTuple;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Esta es la clase principal del programa. Esta esta encargada de leer el archivo .txt donde estan las instrucciones que se quieren verificar.
  *
@@ -83,8 +89,19 @@ public class Console {
 
         //TODO (RAPPY) : Set up el File IO para que lea el archivo de instrucciones que esta en la carpeta de Archivos. Leer cada linea del archivo y pasar lo leido a un string. Si se puede que ignore los "\n" y los bloques de espacio largos
         // NOTA : El file path del archivo esta como una constante
+
+        try(Stream<String> lines = Files.lines(Paths.get(FILEPATH)))
+        {
+            instructions = lines.collect(Collectors.joining(""));
+            System.out.println(instructions);
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
         return instructions;
     }
+
 
 
     /**
