@@ -123,9 +123,10 @@ public class Console {
      * Aclaracion: Por bloque de codigo se esta definiendo a una expresion que tiene sus parentesis balanceados
      * Ej Bloques de instrucciones: ( rotat e back ) , ( if (not (blocked?) ) (walk 1) ( nop ) ), ( define foo (c p) (block (drop c )( free p )(walk one ) ) )
      */
-    public ArrayList<String> getInstructionBlocks(String str){
+
+    public static ArrayList<String> getInstructionBlocks(String str){
         //Le hace trim al string para quitarle el trailing y leading space
-        str = str.trim();
+        str = str.trim().replaceAll("  ", " ");
 
         //Variables de parentesis
         char leftParen = '(';
@@ -133,16 +134,17 @@ public class Console {
 
         //Variables que guardan la pos inicial y final del bloque de instrucciones actual. Se inicializan como el inicio y fin del string
         int initialIndexCurrBlock = 0;
-        int finalIndexCurrBlock = str.lastIndexOf(')');
+        //int finalIndexCurrBlock = str.lastIndexOf(')');
+        int finalIndexCurrBlock = str.length() -1 ;
 
         //Inicializa las estructuras correspondientes
         ArrayList<String> setOfBlocks = new ArrayList<>();
         Stack<Character> stack = new Stack<Character>();
 
-        //Esto es responsable de romper las instrtucciones en bloques aislados
-        //Digamos si hay un caso donde la expreson no este bien escrita , aunque sus parentesis esten balanceados, los bloques se partiran mal, pero en ese caso el interprete es el responsable de dares cuenta que los bloques no cumplen la sintaxis
+
         for (int i = 0; i < str.length(); i++)
         {
+            String currChar = str.charAt(i) + "";
             //Anade al stack los (
             if (str.charAt(i) == leftParen) {
                 stack.push(leftParen);
@@ -156,14 +158,13 @@ public class Console {
             //Cuando se haya hecho el ultimo pop al stack y este se encuentra vacio
             if(stack.isEmpty()){
                 // Saca el bloque de instrucciones dentro del codigo
-                String currBlock = str.substring(initialIndexCurrBlock, (str.charAt(i) + 1));
+                String currBlock = str.substring(initialIndexCurrBlock, (i + 1));
 
                 //Se incrementa el indice inicial para la siguiente lectura
                 initialIndexCurrBlock = i + 1;
 
                 //Se anade el bloque de codigo reconocido al arreglo con los bloques de codigo
                 setOfBlocks.add(currBlock);
-
             }
         }
 
