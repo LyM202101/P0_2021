@@ -40,7 +40,7 @@ public class Console {
         //Si los parentesis no estan balanceados el set de instrucciones es invalido. Si es valido toca hacer mas revisiones
         if(checkForBalancedParenthesis(instructions)){
             //Rompe las instrucciones a bloques de instrucciones individuales
-            //ArrayList<String> instructionBlocks = getInstructionBlock(instructions);
+            ArrayList<String> instructionBlocks = getInstructionBlocks(instructions);
 
             //TODO : Llamar al lexer para tokenizar
 
