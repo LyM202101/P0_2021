@@ -1,3 +1,5 @@
+import Controller.Interpreter;
+import Controller.Lexer;
 import HelperClases.PairTuple;
 
 import java.util.ArrayList;
@@ -42,11 +44,22 @@ public class Console {
             //Rompe las instrucciones a bloques de instrucciones individuales
             ArrayList<String> instructionBlocks = getInstructionBlocks(instructions);
 
-            //TODO : Llamar al lexer para tokenizar
+            for(int i = 0 ; i < instructionBlocks.size(); i++){
+                String currentBlock = instructionBlocks.get(i);
 
-            //TODO : Pasar informacion al interpreter para verificar la informacion
+                //TODO : Implementar clase Lexer y re-activar estos metodos
+                /*
+                Lexer lexer = new Lexer();
+                ArrayList tokenizedBlock = lexer.tokenize(currentBlock);
+                 */
 
-            //Aqui el lexer tiene que responder con un boolean que cambie el estado de isValid de acuerdo a su analisis
+                //TODO: Implementar clase Interpreter y re-actuivar estos metodos
+                /*
+                Interpreter interpreter = new Interpreter();
+                isValid = interpreter.verifyCodeBlock(tokenizedBlock);
+                 */
+            }
+
 
         }
 
