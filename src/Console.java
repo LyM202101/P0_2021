@@ -124,42 +124,52 @@ public class Console {
      * Ej Bloques de instrucciones: ( rotat e back ) , ( if (not (blocked?) ) (walk 1) ( nop ) ), ( define foo (c p) (block (drop c )( free p )(walk one ) ) )
      */
     public ArrayList<String> getInstructionBlocks(String str){
-    /*
+        //Le hace trim al string para quitarle el trailing y leading space
+        str = str.trim();
+
         //Variables de parentesis
         char leftParen = '(';
         char rightParen = ')';
 
         //Variables que guardan la pos inicial y final del bloque de instrucciones actual. Se inicializan como el inicio y fin del string
-        int initCharCurrBlock = 0;
-        int finalCharCurrBlock = str.lastIndexOf(')');
+        int initialIndexCurrBlock = 0;
+        int finalIndexCurrBlock = str.lastIndexOf(')');
 
+        //Inicializa las estructuras correspondientes
+        ArrayList<String> setOfBlocks = new ArrayList<>();
         Stack<Character> stack = new Stack<Character>();
 
-        //Esto es responsable de ir anadiendo los parentesis que encuentre en la expresion a un stack
+        //Esto es responsable de romper las instrtucciones en bloques aislados
+        //Digamos si hay un caso donde la expreson no este bien escrita , aunque sus parentesis esten balanceados, los bloques se partiran mal, pero en ese caso el interprete es el responsable de dares cuenta que los bloques no cumplen la sintaxis
         for (int i = 0; i < str.length(); i++)
         {
-
             //Anade al stack los (
             if (str.charAt(i) == leftParen) {
                 stack.push(leftParen);
             }
 
-            //Cuando se encuentra con un )
+            //Cuando se encuentra con un ) se hace pop al stack
             else if (str.charAt(i) == rightParen) {
-                // Si el prmer parentesiis que se lee es un ) la expresion esta automaticamente mal
-                if (stack.isEmpty()) {
-                    return false;
-                }
+                stack.pop();
+            }
 
-                // Si se hace pop al stack y el parentesis que sale no es un ( eso significa que esta mal
-                if (stack.pop() != leftParen) {
-                    return false;
-                }
+            //Cuando se haya hecho el ultimo pop al stack y este se encuentra vacio
+            if(stack.isEmpty()){
+                // Saca el bloque de instrucciones dentro del codigo
+                String currBlock = str.substring(initialIndexCurrBlock, (str.charAt(i) + 1));
+
+                //Se incrementa el indice inicial para la siguiente lectura
+                initialIndexCurrBlock = i + 1;
+
+                //Se anade el bloque de codigo reconocido al arreglo con los bloques de codigo
+                setOfBlocks.add(currBlock);
+
             }
         }
 
-     */
-        return null;
+        //Retorna la lista con cada uno de los bloques de codigo reconocidos
+        return setOfBlocks;
+
     }
 
 }
