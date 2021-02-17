@@ -11,12 +11,31 @@ public class Lexer {
      */
     static final String[] command = {"walk", "rotate", "look", "drop", "free", "pick", "grab", "walkTo","NOP","block","if", "define"};
 
-    //TODO: Hay que encontrar una manera de ir añadiendo a una lista a las funciones que se vayan definiendo
+    //TODO: Hay que encontrar una manera de ir añadiendo a una lista a las funciones que se vayan definiendo. Aunque creo que eso seria la responsabilidad del interpreter
+
+
+    //-------------------------------------------------------------------------------------
+    // METODOS
+    //-------------------------------------------------------------------------------------
+
+
+    //TODO: Metodo que procese una lista de bloques de codigo
+
+
+
+    //TODO : Metodo que procese un bloque de codigo individualmente
+
+
+    //TODO: Metodo que revisa el tipo de argumento
+
+
+    //TODO: Metodos que revisan si un argumento(str) es INT, CARDIR, RELDIR, ENTITY
 
 
 
 
-    public static ArrayList<Keyword> processRoutine(String[] lines){
-        ArrayList<Keyword> KeywordList = new ArrayList<>();
-    }
+
+
+
+
 }

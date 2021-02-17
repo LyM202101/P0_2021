@@ -19,7 +19,8 @@ public enum Tag {
     BLOCKED,
     FACING,
     CAN,
-    NOT
+    NOT,
+    USER_FUNCTION
 }
 
 
