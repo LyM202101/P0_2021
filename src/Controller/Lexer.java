@@ -56,6 +56,9 @@ public class Lexer {
         else{
             cleanedBlock = cleanUpOuterParenthesis(codeBlock,1);
         }
+
+        //remove this cuando termine el metodo 
+        return null;
     }
 
     //TODO:Metodo que limpia los surrounding parentesis del codeblock
