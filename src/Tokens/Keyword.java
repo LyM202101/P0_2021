@@ -38,7 +38,6 @@ public class Keyword extends Token{
 
 
 
-
     public Keyword(String lexeme, Tag tag, Token... args) {
         super(tag);
         this.lexeme = lexeme;
@@ -135,5 +134,10 @@ public class Keyword extends Token{
             }
         }
         return cmdTag;
+    }
+
+
+    public static void addUsrDefinedFunction(String newFunct){
+        userDefinedFunctions.add(newFunct);
     }
 }
