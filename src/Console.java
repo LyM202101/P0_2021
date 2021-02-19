@@ -50,22 +50,14 @@ public class Console {
             //Rompe las instrucciones a bloques de instrucciones individuales
             ArrayList<String> instructionBlocks = getInstructionBlocks(instructions);
 
-            for(int i = 0 ; i < instructionBlocks.size(); i++){
-                String currentBlock = instructionBlocks.get(i);
 
-                //TODO : Implementar clase Lexer y re-activar estos metodos
-                /*
-                Lexer lexer = new Lexer();
-                ArrayList tokenizedBlock = lexer.tokenize(currentBlock);
-                 */
+            //TODO : Implementar clase Lexer y re-activar estos metodos
+            /*ArrayList tokenizedBlock = Lexer.tokenize(currentBlock); */
 
-                //TODO: Implementar clase Interpreter y re-actuivar estos metodos
-                /*
-                Interpreter interpreter = new Interpreter();
-                isValid = interpreter.verifyCodeBlock(tokenizedBlock);
-                 */
-            }
+            //TODO: Implementar clase Interpreter y re-actuivar estos metodos
+            /*isValid = Interpreter.verifyCodeBlock(tokenizedBlock);*/
 
+            //TODO: poner el else si los parentesis no estan balanceados
 
         }
 

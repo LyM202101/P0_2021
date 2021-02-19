@@ -18,8 +18,12 @@ public class Lexer {
      */
     static final ArrayList<String> userDefinedFunctions = new ArrayList<>();
 
-    //TODO: Hay que encontrar una manera de ir añadiendo a una lista a las funciones que se vayan definiendo. Aunque creo que eso seria la responsabilidad del interpreter
+    /**
+     * En este arreglo se guardan las variables definidas por el usuario
+     */
+    static final ArrayList<String> userDefinedVariable = new ArrayList<>();
 
+    //TODO: Hay que encontrar una manera de ir añadiendo a una lista a las funciones que se vayan definiendo. Aunque creo que eso seria la responsabilidad del interpreter
 
     //-------------------------------------------------------------------------------------
     // METODOS
@@ -57,7 +61,7 @@ public class Lexer {
             cleanedBlock = cleanUpOuterParenthesis(codeBlock,1);
         }
 
-        //remove this cuando termine el metodo 
+        //remove this cuando termine el metodo
         return null;
     }
 
