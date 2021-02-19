@@ -51,14 +51,10 @@ public class Console {
             ArrayList<String> instructionBlocks = getInstructionBlocks(instructions);
 
 
-            //TODO : Implementar clase Lexer y re-activar estos metodos
-            /*ArrayList tokenizedBlock = Lexer.tokenize(currentBlock); */
-
-            //TODO: Implementar clase Interpreter y re-actuivar estos metodos
-            /*isValid = Interpreter.verifyCodeBlock(tokenizedBlock);*/
-
-            //TODO: poner el else si los parentesis no estan balanceados
-
+            isValid = Interpreter.process(instructionBlocks);
+        }
+        else{
+            isValid = false;
         }
 
         //Dejar quieto, se va a arreglar cuando el lexer este listo

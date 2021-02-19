@@ -3,6 +3,7 @@ package Controller;
 import Tokens.Keyword;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Lexer {
 
@@ -21,7 +22,7 @@ public class Lexer {
     /**
      * En este arreglo se guardan las variables definidas por el usuario
      */
-    static final ArrayList<String> userDefinedVariable = new ArrayList<>();
+    static final HashMap<String, Integer> userDefinedVariable = new HashMap<>();
 
     //TODO: Hay que encontrar una manera de ir añadiendo a una lista a las funciones que se vayan definiendo. Aunque creo que eso seria la responsabilidad del interpreter
 
@@ -32,7 +33,7 @@ public class Lexer {
     // Asi se ve el contenido de una rutina (el arraylist) que es lines ;  { (r), (i(n(b))(w)(n)), (b(i(n(b))(w)(n))(r)),(d),(d(c)(b(d)(f)(w))),(f)}
 
     //TODO: Metodo que procese una lista de bloques de codigo
-    public static ArrayList<Keyword> processRoutine(String[] lines) {
+    public static ArrayList<Keyword> processRoutine(ArrayList<String> lines) {
         ArrayList<Keyword> keywordList = new ArrayList<>();
         for (String line : lines) {
             keywordList.add(processCodeBlock(line));
