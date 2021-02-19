@@ -1,6 +1,4 @@
-package Tokens;
-
-import OldTokens.Tag;
+package OldTokens;
 
 abstract class Token {
     public final Tag tag;

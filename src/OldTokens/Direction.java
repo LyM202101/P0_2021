@@ -1,7 +1,6 @@
-package Tokens;
+package OldTokens;
 
 
-import java.util.Arrays;
 public class Direction extends Token {
     public Directions direction;
 

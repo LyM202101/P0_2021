@@ -1,4 +1,4 @@
-package Tokens;
+package OldTokens;
 
 public enum Tag {
     NUM,

@@ -1,6 +1,6 @@
 package Controller;
 
-import Tokens.Keyword;
+import OldTokens.Keyword;
 
 import java.util.ArrayList;
 import java.util.HashMap;

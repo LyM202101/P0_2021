@@ -1,4 +1,4 @@
-package Tokens;
+package OldTokens;
 
 public class Function extends Token{
     String functionName;

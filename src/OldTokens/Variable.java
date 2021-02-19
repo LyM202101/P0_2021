@@ -1,4 +1,4 @@
-package Tokens;
+package OldTokens;
 
 public class Variable extends Token {
     String varName;

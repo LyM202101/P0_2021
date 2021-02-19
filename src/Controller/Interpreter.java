@@ -1,10 +1,8 @@
 package Controller;
 
-import Tokens.Keyword;
+import OldTokens.Keyword;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * El lexer es quien recibe los comandos y es responsable de verificar si siguen la sintaxis apropiada de cada uno definido por el lenguje
