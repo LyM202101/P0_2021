@@ -1,6 +1,7 @@
 package Controller;
 
 import Tokens.Keyword;
+import Tokens.Tag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,8 +45,17 @@ public class Lexer {
      * @return Un Keyword que contiene el tag y actua como un token
      */
     public static Keyword processCodeBlock(String codeBlock){
+        //Quita los parentesis exteriores
         String cleanedBlock = cleanedBlock(codeBlock);
 
+        //Saca la palabra inicial del bloque de codigo (todas tienen un espacio que las separa del resto del bloque)
+        String initialKeyword = cleanedBlock.split(" ")[0];
+
+        //Encuentra cual tag debe tener el keyword
+        Tag keyTag = Keyword.findCmdTag(cleanedBlock);
+
+        //Crea una keyword con el codeBlock original y su keytag correspondiente
+        Keyword blockKeyWord = new Keyword(cleanedBlock,keyTag );
 
         return null;
     }

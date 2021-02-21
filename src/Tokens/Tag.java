@@ -2,9 +2,9 @@ package Tokens;
 
 public enum Tag {
     NUM,
+    DIR,
     VAR,
 
-    DIR,
     WALK,
     ROTATE,
     LOOK,
@@ -21,7 +21,7 @@ public enum Tag {
 
     IF,
 
-    USER_FUN_VAR
+    USER_FUN
 
 }
 

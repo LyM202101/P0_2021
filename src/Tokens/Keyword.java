@@ -18,20 +18,29 @@ public class Keyword extends Token {
     static final HashMap<String, String> userDefinedVariable = new HashMap<>();
 
 
-
-
-
+    /**
+     * En este caso el lexema es el mismo que el code block pero no incluye los parentesis exteriores
+     */
     String lexeme;
 
-    public Keyword(String lexeme, Tag tag) {
+
+    /**
+     * Constructor de Keyword que tiene el cleaned lexeme
+     * @param lexeme el cleaned block lexeme
+     * @param tag el tag que corresponde al bloque de codigo
+     */
+    public Keyword(String lexeme, Tokens.Tag tag) {
         super(tag);
         this.lexeme = lexeme;
 
     }
 
 
+    public Tag getTag(){
+        return this.tag;
+    }
     public String getLexeme() {
-        return lexeme;
+        return this.lexeme;
     }
 
     public static Tag findCmdTag(String command){
@@ -80,9 +89,9 @@ public class Keyword extends Token {
                 cmdTag = Tag.DEFINE;
             }
 
-            //COMO DEFAULT SE VA A DEFIIR TODO LO NULO COMO UN POSIBLE CASO DE LLAMADO A UNA FUNCION
+            //COMO DEFAULT SE VA A DEFIIR TO DO LO NULO COMO UN POSIBLE CASO DE LLAMADO A UNA FUNCION(uno no puede llamar una variable de forma aisalda)
             else {
-                cmdTag = Tag.USER_FUN_VAR;
+                cmdTag = Tag.USER_FUN;
             }
         }
 
