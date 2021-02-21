@@ -125,7 +125,7 @@ public class Interpreter {
                 }
                 //DEFINE VARIABLE
                 else{
-                    //valid = defineVariableCheck(currInstructionBlock,currentKeyword,currKeywordTag);
+                    valid = defineVariableCheck(currentKeyword);
                 }
             }
 
@@ -528,7 +528,7 @@ public class Interpreter {
             }
         }
 
-        //Si para el return valid sigue siendo true significa que el bloque paso todas las pruebas nesecarias 
+        //Si para el return valid sigue siendo true significa que el bloque paso todas las pruebas nesecarias
         return valid;
 
     }
@@ -542,9 +542,35 @@ public class Interpreter {
         return false;
     }
 
-    public static boolean defineVariableCheck(String instructionBlock,Keyword keyword, Tag tag){
-        //TODO
-        return false;
+    /**
+     * Define una nueva variable creada por el usuario que tenga el valor de un numero o una variable previamente definida
+     * @param keyword la palabara clave
+     * @return True si la definicion de la variable es correcta y se añadio exitosamente al hashmap, false de lo contrario
+     */
+    public static boolean defineVariableCheck(Keyword keyword){
+        boolean valid = false;
+
+        String[] partitions= keyword.getLexeme().split(" ");
+        //Idealmente index 0 tiene la palabra define, index 1 tiene el nombre y index 2 tiene el valor
+
+        //Si hay 3 sub strings entonces se tiene algo similar a la estructura de define variable
+        if(partitions.length == 3){
+            //Double check que el primer index tenga define
+            if(partitions[0].equals("define") ){
+                //Sacar el nombre y el valor definidos
+                String name = partitions[1];
+                String value = partitions[2];
+
+                //Se revisa si la variable es un nummero o una variable previamente definida
+                if(strIsCardDir(value) || strIsInt(value) || strIsRelDir(value) || strIsInstruction(value)){
+                    valid = true;
+                    //Se añade la variable al hashmap de variables definidas por elusuario para que se puede usar en otras funciones posteriores
+                    userDefinedVariable.put(name,value);
+                }
+            }
+        }
+
+        return valid;
     }
 
     //------------------------------------------------------------------------------------------------------------------
