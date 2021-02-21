@@ -75,9 +75,6 @@ public class Console {
     public static String readFile() {
         String instructions = "";
 
-        //TODO (RAPPY) : Set up el File IO para que lea el archivo de instrucciones que esta en la carpeta de Archivos. Leer cada linea del archivo y pasar lo leido a un string. Si se puede que ignore los "\n" y los bloques de espacio largos
-        // NOTA : El file path del archivo esta como una constante
-
         try(Stream<String> lines = Files.lines(Paths.get(FILEPATH)))
         {
             instructions = lines.collect(Collectors.joining(""));

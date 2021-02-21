@@ -29,7 +29,7 @@ public class Keyword extends Token {
      * @param lexeme el cleaned block lexeme
      * @param tag el tag que corresponde al bloque de codigo
      */
-    public Keyword(String lexeme, Tokens.Tag tag) {
+    public Keyword(String lexeme, Tag tag) {
         super(tag);
         this.lexeme = lexeme;
 

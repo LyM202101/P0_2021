@@ -3,10 +3,7 @@ package Controller;
 import Tokens.Keyword;
 import Tokens.Tag;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * El lexer es quien recibe los comandos y es responsable de verificar si siguen la sintaxis apropiada de cada uno definido por el lenguje
@@ -20,7 +17,7 @@ public class Interpreter {
     /**
      * En este arreglo se guardan las variables definidas por el usuario
      */
-    static final HashMap<String, Integer> userDefinedVariable = new HashMap<>();
+    static final HashMap<String, String> userDefinedVariable = new HashMap<>();
 
     /**
      * Establece las keywords y bloques de codigo que corresponden
@@ -28,6 +25,17 @@ public class Interpreter {
     static HashMap<String,Keyword> keywordsAndCodeBlocks;
 
     public static Tag[] BASIC_COMMANDS = new Tag[]{Tag.DROP, Tag.WALK, Tag.ROTATE, Tag.LOOK, Tag.DROP, Tag.FREE, Tag.PICK, Tag.GRAB, Tag.WALK_TO, Tag.NOP};
+
+    public static String[] basicCmd = new  String[]{"drop", "walk", "rotate", "look", "drop", "free", "pick", "grab", "walkTo", "NOP"};
+
+    public static String[] STR_CARDINAL_DIRS = new String[]{"N", "S", "E", "W"};
+
+    public static String[] STR_RELATIVE_DIRS = new String[]{"left", "right", "back"};
+
+    public static String[] CONDITIONAL_STATEMENTS = new String[]{"blocked?", "facing?" ,"can", "not"};
+
+    public static String[] STR_ROBOT_INSTRUCTIONS = new String[]{"grab", "drop", "free", "pick" };
+
 
     //-------------------------------------------------------------------------------------
     // PROCESSAMIENTO
@@ -71,7 +79,7 @@ public class Interpreter {
         Keyword currentKeyword;
         Tag currKeywordTag;
 
-        for(int i = 0 ; i < instructionBlocks.size() && !valid; i++){
+        for(int i = 0 ; i < instructionBlocks.size() && valid; i++){
 
             currInstructionBlock = instructionBlocks.get(i);
 
@@ -85,17 +93,13 @@ public class Interpreter {
 
             //Si el Tag del Keyword actual es alguno de los comandos actuales este redirige a un metodo que se encarga de lidiar con los basic commands
             if(Arrays.asList(BASIC_COMMANDS).contains(currKeywordTag)){
-                //TODO: Implementar metodo para deal with basic commands. Tiene que return bool
-
-                //valid = basicComandCheck(currInstructionBlock,currentKeyword,currKeywordTag);
+                valid = basicComandCheck(currentKeyword,currKeywordTag);
             }
 
 
             //CONDITIONALS -> IF STATEMENT
             else if(currKeywordTag == Tag.IF){
-                //TODO: Implementar metodo para deal with if statements. tiene que return bool
-
-                //valid = conditionalStatementCheck(currInstructionBlock,currentKeyword,currKeywordTag);
+                valid = ifStatementCheck(currentKeyword);
             }
 
 
@@ -152,42 +156,63 @@ public class Interpreter {
 
     /**
      * Este metodo redirige a los metodos particulares que revisan que cada basic command este correcto sintacticamente
-     * @param instructionBlock el string con el bloque de instrucciones que se esta evaluando
      * @param keyword la keyword de el bloque de instruccines que se esta evaluando
      * @param tag el tag de la keyword que se esta evaluando. En este caso tiene que ser uno de los que esta definido en BASIC_COMMANDS
      * @return TRUE si el basic command sigue la sintaxis indicada, False de lo contrario
      */
-    public static boolean basicComandCheck(String instructionBlock,Keyword keyword, Tag tag){
+    public static boolean basicComandCheck(Keyword keyword, Tag tag){
         boolean valid = false;
         //  public static Tag[] BASIC_COMMANDS = new Tag[]{Tag.DROP, Tag.WALK, Tag.ROTATE, Tag.LOOK, Tag.DROP, Tag.FREE, Tag.PICK, Tag.GRAB, Tag.WALK_TO, Tag.NOP};
 
+        //Saca un arreglo de la version limpia del String
+        String[] strArray = keyword.getLexeme().split(" ");
+        //Me saca el string del comando
+        String strCommand = strArray[0];
+
+        //inicializa arreglo de parametros
+        ArrayList<String> params = new ArrayList<>();
+
+        //nuemro de argumentos
+        int numArgs = 0;
+
+
+        //Saca los argumentos
+        if(strArray.length > 1){
+            for(int i = 1 ; i < strArray.length; i++){
+                params.add(strArray[i]);
+            }
+
+            numArgs = params.size();
+        }
+
+
         switch (tag) {
             case WALK:
-                valid = checkWalk(instructionBlock,keyword);
+                valid = checkWalk(params);
                 break;
             case ROTATE:
-                valid = checkRotate(instructionBlock,keyword);
+                valid = checkRotate(params);
                 break;
             case LOOK:
-                valid = checkLook(instructionBlock,keyword);
+                valid = checkLook(params);
                 break;
             case DROP:
-                valid = checkDrop(instructionBlock,keyword) ;
+                valid = checkDrop( params) ;
                 break;
             case FREE:
-                valid = checkFree(instructionBlock,keyword);
+                valid = checkFree( params);
                 break;
             case PICK:
-                valid = checkPick(instructionBlock,keyword);
+                valid = checkPick( params);
                 break;
             case GRAB:
-                valid = checkGrab(instructionBlock,keyword);
+                valid = checkGrab(params);
                 break;
             case WALK_TO:
-                valid = checkWalkTo(instructionBlock,keyword) ;
+                valid = checkWalkTo(params) ;
                 break;
             case NOP:
-                valid = checkNOP(instructionBlock,keyword);
+                valid = (numArgs == 0)? false: checkNOP(keyword);
                 break;
         }
         return valid;
@@ -195,55 +220,293 @@ public class Interpreter {
     }
 
 
-    public static boolean checkWalk(String instructionBlock,Keyword keyword){
+    public static boolean checkWalk(ArrayList<String> params){
+        boolean valid = false;
+        if(params.size() == 1){
+            //Verifica que el parametro sea un int
+            valid = strIsInt(params.get(0));
+            if(!valid){
+                //Revisar las variables definidas si hay alguna variable con el nombre del parametro
+                String varValue = userDefinedVariable.get(params.get(0));
+                if(varValue != null){
+                    valid = strIsInt(varValue);
+                }
+            }
+        }
 
+        return valid;
     }
 
-    public static boolean checkRotate(String instructionBlock,Keyword keyword){
-
+    public static boolean checkRotate(ArrayList<String> params){
+        boolean valid = false;
+        if(params.size() == 1){
+            //Verifica que el parametro sea un int
+            valid = strIsRelDir(params.get(0));
+            if(!valid){
+                //Revisar las variables definidas si hay alguna variable con el nombre del parametro
+                String varValue = userDefinedVariable.get(params.get(0));
+                if(varValue != null){
+                    valid = strIsRelDir(varValue);
+                }
+            }
+        }
+        return valid;
     }
 
-    public static boolean checkLook(String instructionBlock,Keyword keyword){
-
+    public static boolean checkLook(ArrayList<String> params){
+        boolean valid = false;
+        if(params.size() == 1){
+            //Verifica que el parametro sea un int
+            valid = strIsCardDir(params.get(0));
+            if(!valid){
+                //Revisar las variables definidas si hay alguna variable con el nombre del parametro
+                String varValue = userDefinedVariable.get(params.get(0));
+                if(varValue != null){
+                    valid = strIsCardDir(varValue);
+                }
+            }
+        }
+        return valid;
     }
 
-    public static boolean checkDrop(String instructionBlock,Keyword keyword){
-
+    public static boolean checkDrop(ArrayList<String> params){
+        boolean valid = false;
+        if(params.size() == 1){
+            //Verifica que el parametro sea un int
+            valid = strIsInt(params.get(0));
+            if(!valid){
+                //Revisar las variables definidas si hay alguna variable con el nombre del parametro
+                String varValue = userDefinedVariable.get(params.get(0));
+                if(varValue != null){
+                    valid = strIsInt(varValue);
+                }
+            }
+        }
+        return valid;
     }
 
-    public static boolean checkFree(String instructionBlock,Keyword keyword){
-
+    public static boolean checkFree( ArrayList<String> params){
+        boolean valid = false;
+        if(params.size() == 1){
+            //Verifica que el parametro sea un int
+            valid = strIsInt(params.get(0));
+            if(!valid){
+                //Revisar las variables definidas si hay alguna variable con el nombre del parametro
+                String varValue = userDefinedVariable.get(params.get(0));
+                if(varValue != null){
+                    valid = strIsInt(varValue);
+                }
+            }
+        }
+        return valid;
     }
 
-    public static boolean checkPick(String instructionBlock,Keyword keyword){
-
+    public static boolean checkPick(ArrayList<String> params){
+        boolean valid = false;
+        if(params.size() == 1){
+            //Verifica que el parametro sea un int
+            valid = strIsInt(params.get(0));
+            if(!valid){
+                //Revisar las variables definidas si hay alguna variable con el nombre del parametro
+                String varValue = userDefinedVariable.get(params.get(0));
+                if(varValue != null){
+                    valid = strIsInt(varValue);
+                }
+            }
+        }
+        return valid;
     }
 
-    public static boolean checkGrab(String instructionBlock,Keyword keyword){
-
+    public static boolean checkGrab( ArrayList<String> params){
+        boolean valid = false;
+        if(params.size() == 1){
+            //Verifica que el parametro sea un int
+            valid = strIsInt(params.get(0));
+            if(!valid){
+                //Revisar las variables definidas si hay alguna variable con el nombre del parametro
+                String varValue = userDefinedVariable.get(params.get(0));
+                if(varValue != null){
+                    valid = strIsInt(varValue);
+                }
+            }
+        }
+        return valid;
     }
 
-    public static boolean checkWalkTo(String instructionBlock,Keyword keyword){
+    public static boolean checkWalkTo( ArrayList<String> params){
+        boolean valid = false;
+        if(params.size() == 2){
+            //Verifica que el parametro sea un int
+            boolean param1Valid = false;
+            boolean param2Valid = false;
 
+            //Revisa si primer parametro es un int o no
+            if(strIsInt(params.get(0))){
+                param1Valid =true;
+            }
+            //Si no es un int hace un ultimo chequeo si es alguna variable definida y si es un int
+            if(!param1Valid){
+                //Revisar las variables definidas si hay alguna variable con el nombre del parametro
+                String varValue1 = userDefinedVariable.get(params.get(0));
+                if(varValue1 != null){
+                    param1Valid = strIsInt(varValue1);
+                }
+            }
+
+            //Revisa si el segundo parametro es una direccion cardinal o no
+            if(strIsCardDir(params.get(1))){
+                param2Valid = true;
+            }
+            //Si no es un int hace un ultimo chequeo si es alguna variable definida y si es una direccion cardinal
+            if(!param2Valid){
+                //Revisar las variables definidas si hay alguna variable con el nombre del parametro
+                String varValue2 = userDefinedVariable.get(params.get(1));
+                if(varValue2 != null){
+                    param1Valid = strIsCardDir(varValue2);
+                }
+            }
+
+            //Si ambos parametros son validos entonces se valida el basic command
+            if(param1Valid && param2Valid){
+                valid = true;
+            }
+        }
+        return valid;
     }
 
-    public static boolean checkNOP(String instructionBlock,Keyword keyword){
-
+    /**
+     * Revisa que se siga la sintaxis del comando NOP
+     * @param keyword la keyword del comando
+     * @return True si es valido, False de lo contrario
+     */
+    public static boolean checkNOP(Keyword keyword){
+        //Solo tengo que revisar que sea NOP el lexeme
+        return keyword.getLexeme().equals("NOP");
     }
     //------------------------------------------------------------------------------------------------------------------
     // CONDITIONAL IF STATEMENT METHODS
     //------------------------------------------------------------------------------------------------------------------
 
-    public static boolean conditionalStatementCheck(String instructionBlock,Keyword keyword, Tag tag){
+    public static boolean ifStatementCheck(Keyword keyword){
+        boolean valid = false;
+
+
+        //Expected Structure : (if (cond) (command1) (command2))
+        String cleanedCommand = keyword.getLexeme();
+        //Saca los componentes
+        ArrayList<String> components = getComponents(cleanedCommand);
+
+        if(components.size() == 3){
+            valid = (conditionalCheck(components.get(0)) && (commandCheck(components.get(1)) && commandCheck(components.get(2))));
+        }
+
+        return valid;
+
 
     }
+
+    public static boolean conditionalCheck(String conditionStr){
+        boolean valid = false;
+
+        if(containsConditional(conditionStr)){
+            String[] componentsConditional = conditionStr.split(" ");
+            String condition = componentsConditional[0];
+
+
+            switch (condition) {
+                case "blocked?":
+                    valid = checkBlocked(componentsConditional);
+                    break;
+                case "facing?":
+                    valid = checkFacing(componentsConditional);
+                    break;
+                case "can":
+                    valid = checkCan(componentsConditional);
+                    break;
+                case  "not":
+                    valid = checkNot(componentsConditional, conditionStr);
+                    break;
+            }
+        }
+
+        return valid;
+
+
+    }
+
+    public static boolean checkBlocked(String[] componentsConditional){
+        //Si se tiene mas de un elemento en el arreglo significa que hayparametros por lo tanto no esta bien definido blocked
+        return componentsConditional.length <= 1;
+    }
+
+    public static boolean checkFacing(String[] componentsConditional){
+        boolean valid = false;
+        if(componentsConditional.length == 2){
+            valid = strIsCardDir(componentsConditional[1]);
+        }
+        return valid;
+    }
+    public static boolean checkCan(String[] componentsConditional){
+        boolean valid = false;
+        if(componentsConditional.length == 2){
+            valid = strIsInstruction(componentsConditional[1]);
+        }
+        return valid;
+    }
+
+    //TODO: REVISAR ESTO CON MUCHO CUIDADO DURANTE TESTING
+    //Esto es recursivo. Cuando hay una cadena de nots esto se sigue intentando resolver rcursivamente hasta que la conduicion sea un con
+    public static boolean checkNot(String[] componentsConditional, String str){
+        boolean valid = false;
+            if(componentsConditional.length == 2){
+                String clean = cleanUpOuterParenthesis(str,1);
+                clean = clean.substring(clean.indexOf("("),clean.lastIndexOf(")"));
+                valid = conditionalCheck(clean);
+            }
+        return valid;
+    }
+
+
+
+
+    public static boolean commandCheck(String commandStr){
+        boolean valid = false;
+        //3 casos : basic command , defined function, block commands o if statements
+
+        String strWithParenthesis = "(" + commandStr + ")";
+        Keyword kwdCommand = Lexer.processCodeBlock(strWithParenthesis);
+
+        //BASIC COMMAND CHECK
+        if(containsBasicCommand(commandStr)){
+            //Delega el chequeo a basicCommandCheck
+            valid = basicComandCheck(kwdCommand,kwdCommand.getTag());
+        }
+        //IF STATEMENTS
+        if(commandStr.startsWith("if")){
+            //Delega chequeo de nuevo a ifStatement (queda recursivo)
+            valid = ifStatementCheck(kwdCommand);
+        }
+        //BLOCK COMMAND
+        if(commandStr.startsWith("block")){
+            //Delega chequeo a block statement check
+            valid = blockStatementCheck(kwdCommand);
+        }
+        //USER FUNCTIN
+        if(containsUserFunction(commandStr)){
+            //TODO HACER LO DE USER DEFINED FUNCTIONS
+            //valid = userDefinedFunctionCheck(kwdCommand);
+        }
+        return valid;
+    }
+
 
     //------------------------------------------------------------------------------------------------------------------
     // BLOCK METHODS
     //------------------------------------------------------------------------------------------------------------------
 
-    public static boolean  blockStatementCheck(String instructionBlock,Keyword keyword, Tag tag){
-
+    public static boolean  blockStatementCheck(Keyword keyword){
+        //TODO
+        return false;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -251,19 +514,22 @@ public class Interpreter {
     //------------------------------------------------------------------------------------------------------------------
 
     public static boolean defineFunctionCheck(String instructionBlock,Keyword keyword, Tag tag){
-
+        //TODO
+        return false;
     }
 
     public static boolean defineVariableCheck(String instructionBlock,Keyword keyword, Tag tag){
-
+        //TODO
+        return false;
     }
 
     //------------------------------------------------------------------------------------------------------------------
     // USER FUNCTION CALL METHODS
     //------------------------------------------------------------------------------------------------------------------
 
-    public static boolean userDefinedFunctionCheck(String instructionBlock,Keyword keyword, Tag tag){
-
+    public static boolean userDefinedFunctionCheck(Keyword keyword){
+        //TODO
+        return false;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -289,5 +555,147 @@ public class Interpreter {
     }
 
 
+    /**
+     * Revisa si un string tien valores numericos como contenido
+     * @param str
+     * @return
+     */
+    public static boolean strIsInt(String str) {
+        for (int a = 0; a < str.length(); a++) {
+            if (!Character.isDigit(str.charAt(a))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    public static boolean strIsRelDir(String str) {
+
+        for (String relativeDirections : STR_RELATIVE_DIRS) {
+            if ((str.equals(relativeDirections))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static boolean strIsCardDir(String str) {
+
+        for (String relativeDirections : STR_CARDINAL_DIRS) {
+            if ((str.equals(relativeDirections))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static boolean strIsInstruction(String str) {
+
+        for (String instruction : STR_ROBOT_INSTRUCTIONS) {
+            if ((str.equals(instruction))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static ArrayList<String> getComponentBlocks(String str){
+        char leftParen = '(';
+        char rightParen = ')';
+
+        int initialIndexCurrComp = 0;
+        int finalIndexCurrBlock = str.indexOf(')') ;
+
+        ArrayList<String> setOfComponents = new ArrayList<>();
+        Stack<Character> stack = new Stack<Character>();
+
+        for (int i = 0; i < str.length(); i++)
+        {
+            String currChar = str.charAt(i) + "";
+            if (str.charAt(i) == leftParen) {
+                stack.push(leftParen);
+            }
+            else if (str.charAt(i) == rightParen) {
+                stack.pop();
+            }
+            if(stack.isEmpty()){
+                String currBlock = str.substring(initialIndexCurrComp, (i + 1));
+                initialIndexCurrComp = i + 1;
+                setOfComponents.add(currBlock);
+            }
+        }
+
+        return setOfComponents;
+
+    }
+
+
+    public static ArrayList<String> getComponents(String instructionBlock){
+        //Saca el indice del primer parentesis
+        int indexOfFirstParenthesis = instructionBlock.indexOf('(');
+        int indexOfLastParenthesis = instructionBlock.lastIndexOf(')');
+
+        //Me saca el contenido de los componentes (deberia ser (cond) (cmd) (cmd)
+        String subStringOfComponents = instructionBlock.substring(indexOfFirstParenthesis, indexOfLastParenthesis);
+        ArrayList<String> components = getComponentBlocks(subStringOfComponents);
+
+        //Limpia los parentesis de los componentes
+        for(String comp : components){
+            // El regex de [()] va a hace match con cualquiera ( o )
+            comp = comp.replaceAll("[()]", "");
+        }
+        return  components;
+    }
+
+   public static boolean containsConditional(String str){
+       for(String conditional: CONDITIONAL_STATEMENTS){
+           if(str.startsWith(conditional)){
+               return true;
+           }
+       }
+       return false;
+   }
+
+    public static boolean containsBasicCommand(String str){
+        for(String comand: basicCmd){
+            if(str.startsWith(comand)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean containsUserFunction(String str){
+        for(String funct: userDefinedFunctions){
+            if(str.startsWith(funct)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *  Saca un substring del string original basado en el numero de parenteiss
+     * @param codeBlock el bloque de codigo original
+     * @param numPar el numero de parentesis
+     * @return Un string sin el nuemro de parentesis
+     */
+    public static String cleanUpOuterParenthesis(String codeBlock, int numPar){
+        int numChars = codeBlock.length()- 1;
+        String cleanedUpBlock = "";
+
+        if(numPar == 1){
+            cleanedUpBlock = codeBlock.substring(1,(numChars));
+        }
+        else{
+            cleanedUpBlock = codeBlock.substring(2,(numChars-1));
+        }
+
+        assert !cleanedUpBlock.equals("");
+
+
+        return cleanedUpBlock;
+    }
 }

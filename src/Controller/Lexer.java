@@ -19,6 +19,7 @@ public class Lexer {
     static final String[] commands = {"walk", "rotate", "look", "drop", "free", "pick", "grab", "walkTo","NOP","block","if", "define"};
 
 
+
     //-------------------------------------------------------------------------------------
     // METODOS
     //-------------------------------------------------------------------------------------
@@ -102,4 +103,8 @@ public class Lexer {
         return cleanedUpBlock;
     }
 
+
+    public static boolean isCodeBlockBasicFunction(String codeBlock){
+
+    }
 }
