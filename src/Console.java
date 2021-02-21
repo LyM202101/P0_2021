@@ -38,9 +38,6 @@ public class Console {
     public static void main(String args[]) {
         //Variable donde se va a guardar el resultado de evaluacion de las instrucciones
         boolean isValid = false;
-
-        System.out.println("Archivo que esta siendo leido esta en la ruta : " + FILEPATH + "\n");
-
         //Extrae las instrucciones a un archivo
         String instructions = readFile();
 

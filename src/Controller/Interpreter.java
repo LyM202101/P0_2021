@@ -106,7 +106,7 @@ public class Interpreter {
             //BLOCK
             else if(currKeywordTag == Tag.BLOCK){
                 //TODO: Implementar metodo para deal with Block statements. Tiene que return bool
-                //valid = blockStatementCheck(currInstructionBlock,currentKeyword,currKeywordTag);
+                valid = blockStatementCheck(currentKeyword);
             }
 
             //DEFINE FUNCTIONS AND VARIABLES
@@ -459,8 +459,9 @@ public class Interpreter {
     public static boolean checkNot(String[] componentsConditional, String str){
         boolean valid = false;
             if(componentsConditional.length == 2){
-                String clean = cleanUpOuterParenthesis(str,1);
-                clean = clean.substring(clean.indexOf("("),clean.lastIndexOf(")"));
+                //El " " extra es por que substring es non inclusive del ultimo indice entonces si no estaria comiendose el ultimo parentesis
+                String clean = cleanUpOuterParenthesis(str,1) + " ";
+                clean = clean.substring(clean.indexOf("("),clean.lastIndexOf(")") + 1);
                 valid = conditionalCheck(clean);
             }
         return valid;
@@ -505,8 +506,31 @@ public class Interpreter {
     //------------------------------------------------------------------------------------------------------------------
 
     public static boolean  blockStatementCheck(Keyword keyword){
-        //TODO
-        return false;
+        boolean valid = true;
+        int firstParenthesisIndex = keyword.getLexeme().indexOf("(");
+        int lastParenthesisIndex = keyword.getLexeme().lastIndexOf(")");
+        String str = keyword.getLexeme() + " ";
+        String commandsStr = str.substring(firstParenthesisIndex,lastParenthesisIndex + 1);
+
+        //Saca el arreglo de commands
+        ArrayList<String> commands = getComponents(commandsStr);
+
+        //Le quita los parentesis a commands dentro del arraylist
+        for(String command: commands){
+            command = cleanUpOuterParenthesis(command,1);
+        }
+
+        //Itera a travez de commands para ir revisando la validez de cada uno individualmente
+        //Si uno de los comands es falso entonces se sale del for y se declara como invalido todo el block statement
+        for(int i = 0 ; i < commands.size() && valid; i++){
+            if(!commandCheck(commands.get(i))){
+                valid =false;
+            }
+        }
+
+        //Si para el return valid sigue siendo true significa que el bloque paso todas las pruebas nesecarias 
+        return valid;
+
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -636,9 +660,11 @@ public class Interpreter {
         //Saca el indice del primer parentesis
         int indexOfFirstParenthesis = instructionBlock.indexOf('(');
         int indexOfLastParenthesis = instructionBlock.lastIndexOf(')');
+        instructionBlock = instructionBlock + " ";// Para tratar con el problema de substring
 
         //Me saca el contenido de los componentes (deberia ser (cond) (cmd) (cmd)
-        String subStringOfComponents = instructionBlock.substring(indexOfFirstParenthesis, indexOfLastParenthesis);
+        String subStringOfComponents = instructionBlock.substring(indexOfFirstParenthesis, indexOfLastParenthesis + 1
+        );
         ArrayList<String> components = getComponentBlocks(subStringOfComponents);
 
         //Limpia los parentesis de los componentes
