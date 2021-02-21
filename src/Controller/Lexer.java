@@ -18,8 +18,6 @@ public class Lexer {
     static final String[] commands = {"walk", "rotate", "look", "drop", "free", "pick", "grab", "walkTo","NOP","block","if", "define"};
 
 
-
-
     //-------------------------------------------------------------------------------------
     // METODOS
     //-------------------------------------------------------------------------------------
@@ -40,71 +38,58 @@ public class Lexer {
         return keywordList;
     }
 
-    //TODO : Metodo que procese un bloque de codigo individualmente
+    /**
+     * Procesa un bloque de codigo individual. Se le hace basic tokenization para poder hacer el proceso de procesar mas facil
+     * @param codeBlock un String con un bloque de codigo
+     * @return Un Keyword que contiene el tag y actua como un token
+     */
     public static Keyword processCodeBlock(String codeBlock){
-        //Formato del string ej's : ((r)), (i(n(b))(w)(n))
-
         String cleanedBlock = cleanedBlock(codeBlock);
-
-
 
 
         return null;
     }
 
+    /**
+     * Quita los parentesis exteriores de un bloque de codigo
+     * @param str el string que esta rodeado por parentesis '(' ')'
+     * @return El mismo bloque str pero sin los parentesis exeriores
+     */
     public static String cleanedBlock(String str){
         String cleanedBlock = "";
 
-        //Uno tiene que lidiar de una forma completamente diferente con las user defined functions y variables que con el resto del codigo
-
-        //Si el bloque de codigo comienza con (( hay 3 posibles opciones validas ((f a1 . . . an)) que es cuando se esta llamando a una funcion que ha sido definida por el usuario
         if(str.charAt(0) == '(' && str.charAt(1) == '('){
             cleanedBlock = cleanUpOuterParenthesis(str,2);
-
-            //Esto va a añadir una nueva funcion a la lista de funciones definidas por el usuario asi cuando se cree el token no habra problemsas
             String[] newUserFunc = cleanedBlock.split(" ");
-            Keyword.addUsrDefinedFunction(newUserFunc[0]);
         }
-        //El resto de funciones que pueden comenzar un bloque de codigo. Incluye commands, condicionales y definiciones
         else{
             cleanedBlock = cleanUpOuterParenthesis(str,1);
         }
         return cleanedBlock;
-
     }
 
-    //TODO:Metodo que limpia los surrounding parentesis del codeblock
-    public static String cleanUpOuterParenthesis(String codeBlock, int numPar){
 
+    /**
+     *  Saca un substring del string original basado en el numero de parenteiss
+     * @param codeBlock el bloque de codigo original
+     * @param numPar el numero de parentesis
+     * @return Un string sin el nuemro de parentesis
+     */
+    public static String cleanUpOuterParenthesis(String codeBlock, int numPar){
         int numChars = codeBlock.length()- 1;
         String cleanedUpBlock = "";
 
-        //Para las funciones con solo un set de outer parenthesis (f)
         if(numPar == 1){
-            cleanedUpBlock = codeBlock.substring(2,(numChars - 2));
+            cleanedUpBlock = codeBlock.substring(1,(numChars));
         }
-        //Para las funciones con un set de 2 outer parenthesis ((f a1..an))
         else{
-            cleanedUpBlock = codeBlock.substring(1,(numChars-1));
+            cleanedUpBlock = codeBlock.substring(2,(numChars-1));
         }
 
         assert !cleanedUpBlock.equals("");
 
 
         return cleanedUpBlock;
-
     }
-
-    //TODO: Metodo que revisa el tipo de argumento
-
-
-    //TODO: Metodos que revisan si un argumento(str) es INT, CARDIR, RELDIR, ENTITY
-
-
-
-
-
-
-
 
 }
