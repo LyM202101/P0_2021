@@ -1,30 +1,24 @@
 package Controller;
 
-import OldTokens.Keyword;
+import Tokens.Keyword;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Un lexer es responsable del proceso de tokenizacion del texto, lo cual es como pre procesarlo y organizarlo,
+ * de tal manera que sea mas sencillo entender la estructura del codigo para que sea mas facil definir si cumple
+ * o no las caracteristicas en el interpreter
+ */
 public class Lexer {
-
-    //TODO: Implementar los TOKENS en el paquete de tokens
 
     /**
      * Este arreglo contiene la informacion de los comandos simples que tiene el robot
      */
     static final String[] commands = {"walk", "rotate", "look", "drop", "free", "pick", "grab", "walkTo","NOP","block","if", "define"};
 
-    /**
-     * En este arreglo se guardan las funciones definidas por el usuario
-     */
-    static final ArrayList<String> userDefinedFunctions = new ArrayList<>();
 
-    /**
-     * En este arreglo se guardan las variables definidas por el usuario
-     */
-    static final HashMap<String, Integer> userDefinedVariable = new HashMap<>();
 
-    //TODO: Hay que encontrar una manera de ir añadiendo a una lista a las funciones que se vayan definiendo. Aunque creo que eso seria la responsabilidad del interpreter
 
     //-------------------------------------------------------------------------------------
     // METODOS
@@ -32,11 +26,16 @@ public class Lexer {
 
     // Asi se ve el contenido de una rutina (el arraylist) que es lines ;  { (r), (i(n(b))(w)(n)), (b(i(n(b))(w)(n))(r)),(d),(d(c)(b(d)(f)(w))),(f)}
 
-    //TODO: Metodo que procese una lista de bloques de codigo
-    public static ArrayList<Keyword> processRoutine(ArrayList<String> lines) {
+    /**
+     * Este metodo procesa todos los bloques de codigo de un archivo en particular
+     * @param codeBlock un bloque o unidad de codigo ej: (i(n(b))(w)(n))
+     * @return Un arrayList que contiene la keyword que coresponde a un boloque de codigo
+     */
+    //TODO: Re considerar si deberia usar un HashMap en lugar de una Arraylist para esto
+    public static ArrayList<Keyword> processRoutine(ArrayList<String> codeBlock) {
         ArrayList<Keyword> keywordList = new ArrayList<>();
-        for (String line : lines) {
-            keywordList.add(processCodeBlock(line));
+        for (String block : codeBlock) {
+            keywordList.add(processCodeBlock(block));
         }
         return keywordList;
     }
@@ -45,13 +44,22 @@ public class Lexer {
     public static Keyword processCodeBlock(String codeBlock){
         //Formato del string ej's : ((r)), (i(n(b))(w)(n))
 
+        String cleanedBlock = cleanedBlock(codeBlock);
+
+
+
+
+        return null;
+    }
+
+    public static String cleanedBlock(String str){
         String cleanedBlock = "";
 
         //Uno tiene que lidiar de una forma completamente diferente con las user defined functions y variables que con el resto del codigo
 
         //Si el bloque de codigo comienza con (( hay 3 posibles opciones validas ((f a1 . . . an)) que es cuando se esta llamando a una funcion que ha sido definida por el usuario
-        if(codeBlock.charAt(0) == '(' && codeBlock.charAt(1) == '('){
-            cleanedBlock = cleanUpOuterParenthesis(codeBlock,2);
+        if(str.charAt(0) == '(' && str.charAt(1) == '('){
+            cleanedBlock = cleanUpOuterParenthesis(str,2);
 
             //Esto va a añadir una nueva funcion a la lista de funciones definidas por el usuario asi cuando se cree el token no habra problemsas
             String[] newUserFunc = cleanedBlock.split(" ");
@@ -59,11 +67,10 @@ public class Lexer {
         }
         //El resto de funciones que pueden comenzar un bloque de codigo. Incluye commands, condicionales y definiciones
         else{
-            cleanedBlock = cleanUpOuterParenthesis(codeBlock,1);
+            cleanedBlock = cleanUpOuterParenthesis(str,1);
         }
+        return cleanedBlock;
 
-        //remove this cuando termine el metodo
-        return null;
     }
 
     //TODO:Metodo que limpia los surrounding parentesis del codeblock

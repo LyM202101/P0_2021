@@ -1,14 +1,23 @@
 package Controller;
 
-import OldTokens.Keyword;
+import Tokens.Keyword;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * El lexer es quien recibe los comandos y es responsable de verificar si siguen la sintaxis apropiada de cada uno definido por el lenguje
  */
 public class Interpreter {
+    /**
+     * En este arreglo se guardan las funciones definidas por el usuario
+     */
+    static final ArrayList<String> userDefinedFunctions = new ArrayList<>();
 
+    /**
+     * En este arreglo se guardan las variables definidas por el usuario
+     */
+    static final HashMap<String, Integer> userDefinedVariable = new HashMap<>();
 
     //-------------------------------------------------------------------------------------
     // METODOS

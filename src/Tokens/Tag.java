@@ -15,11 +15,13 @@ public enum Tag {
     WALK_TO,
     NOP,
 
+    DEFINE,
+
     BLOCK,
 
     IF,
 
-    USER_FUNCTION,
+    USER_FUN_VAR
 
 }
 
