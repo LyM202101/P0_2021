@@ -89,10 +89,10 @@ public class BasicCommandKeyword extends Token{
                 cmdTag = Tag.GRAB;
                 break;
             case "walkTo":
-                cmdTag = Tag.GRAB;
+                cmdTag = Tag.WALK_TO;
                 break;
             case "NOP":
-                cmdTag = Tag.GRAB;
+                cmdTag = Tag.NOP;
                 break;
         }
         return cmdTag;

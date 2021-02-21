@@ -8,20 +8,10 @@ import java.util.List;
 public class ControlStructure extends Token {
     // A conditional command: (if cond command1 command2) where cond is a condition and command1 and command 2 are commands
 
-    /*public static final int BASIC_COMMAND = 0;
-    public static final int BLOCK_OF_COMMANDS = 1;
-    public static final int DEFINED_FUNCTION = 2;*/
 
-    public enum CommandType{
-        BASIC_COMMAND,
-        BLOCK_OF_COMMANDS,
-        DEFINED_FUNCTION
-    }
+    //El enum de command type esta en su propia clase ya que UserFunction tambien lo usa
 
-    /*public static final int BLOCKED = 3;
-    public static final int FACING = 4;
-    public static final int CAN = 5;
-    public static final int NOT = 6;*/
+
 
     public enum Conditional{
         BLOCKED,
@@ -88,6 +78,12 @@ public class ControlStructure extends Token {
         return com2Type;
     }
 
+
+    /**
+     * Encuentra que tipo de condicional es el condicional del if quye esta siendo analizado
+     * @param condition la condicion
+     * @return Un enum con el tipo de condicional
+     */
     public static Conditional findConditional(String condition){
         Conditional condType = null;
         switch (condition){
@@ -107,13 +103,19 @@ public class ControlStructure extends Token {
         return condType;
     }
 
+
+    /**
+     * Encuentra el tipo de comando que se esta usando dentro de los bloques de comandos enun if statement
+     * @param command el comando
+     * @return Un enum con el tipo de comando que se esta usando
+     */
     public static CommandType findCommandType(String command){
         CommandType commandType = null;
         boolean isBasicCmd = false;
 
         //Arreglo con todos los metodos que son basic commands
         String[] basicCmdArr = new String[]{"walk", "rotate", "look", "drop", "free", "pick", "grab", " walkTo", "NOP"};
-        List<String> basicCmdList = new ArrayList<>(Arrays.asList(basicCmdArr));
+        //List<String> basicCmdList = new ArrayList<>(Arrays.asList(basicCmdArr));
 
         for(String cmd: basicCmdArr){
             if(command.startsWith(cmd)){

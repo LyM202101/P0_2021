@@ -14,9 +14,13 @@ public enum Tag {
     GRAB,
     WALK_TO,
     NOP,
+
     BLOCK,
 
     IF,
+
+    USER_FUNCTION,
+
 }
 
 

@@ -18,6 +18,19 @@ public class Direction extends Token {
 
 
     /**
+     * Define las direcciones cardinales: N,S,W,E
+     */
+    public static String[] cardinalDirections = new String[]{"N", "S", "W", "E"};
+
+    /**
+     * Define las direcciones relativas: L,R,B
+     */
+    public static String[]  relativeDirections = new String[]{"L", "R", "B"};
+
+
+
+
+    /**
      * Especifica la direccion Cardinal o Relativa del robot
      */
     public Directions direction;
