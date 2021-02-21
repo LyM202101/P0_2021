@@ -104,7 +104,5 @@ public class Lexer {
     }
 
 
-    public static boolean isCodeBlockBasicFunction(String codeBlock){
-
-    }
+    
 }
