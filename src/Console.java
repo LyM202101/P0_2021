@@ -41,13 +41,13 @@ public class Console {
         //Variable donde se va a guardar el resultado de evaluacion de las instrucciones
         boolean isValid = false;
         //Extrae las instrucciones a un archivo
-        String instructions = null;
-        try {
+        String instructions = "(walk 6)";
+        /*try {
             instructions = readFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+*/
         //Verifica que los parentesis esten blanceados en la totalidad de las instrucciones
         //Si los parentesis no estan balanceados el set de instrucciones es invalido. Si es valido toca hacer mas revisiones
         if(checkForBalancedParenthesis(instructions)){
@@ -76,7 +76,7 @@ public class Console {
      *
      * @return Un String que contiene las instrucciones dentro del archivo .txt de instrucciones
      */
-    public static String readFile() throws IOException {
+    /* public static String readFile() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(FILEPATH));
         String line = null;
         StringBuilder stringBuilder = new StringBuilder();
@@ -97,7 +97,7 @@ public class Console {
             reader.close();
         }return stringBuilder.toString();
     }
-
+*/
 
 
     /**
