@@ -29,7 +29,7 @@ public class Lexer {
     /**
      * Este metodo procesa todos los bloques de codigo de un archivo en particular
      * @param codeBlock un bloque o unidad de codigo ej: (i(n(b))(w)(n))
-     * @return Un arrayList que contiene la keyword que coresponde a un boloque de codigo
+     * @return Un arrayList que contiene la keyword que corresponde a un bloque de codigo
      */
     //TODO: Re considerar si deberia usar un HashMap en lugar de una Arraylist para esto
     public static ArrayList<Keyword> processRoutine(ArrayList<String> codeBlock) {

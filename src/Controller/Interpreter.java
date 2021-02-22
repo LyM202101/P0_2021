@@ -495,7 +495,7 @@ public class Interpreter {
         //USER FUNCTIN
         if(containsUserFunction(commandStr)){
             //TODO HACER LO DE USER DEFINED FUNCTIONS
-            //valid = userDefinedFunctionCheck(kwdCommand);
+            valid = userDefinedFunctionCheck(kwdCommand);
         }
         return valid;
     }
@@ -539,7 +539,42 @@ public class Interpreter {
 
     public static boolean defineFunctionCheck(String instructionBlock,Keyword keyword, Tag tag){
         //TODO
-        return false;
+        boolean valid = true;
+        int firstParenthesisIndex = keyword.getLexeme().indexOf("(");
+        int lastParenthesisIndex = keyword.getLexeme().lastIndexOf(")");
+        String defineFunction = instructionBlock.substring(firstParenthesisIndex, lastParenthesisIndex);
+        String[] partitions = keyword.getLexeme().split(" ");
+
+        ArrayList<String> userFunctions = new ArrayList<>();
+
+        if(partitions.length == 4)
+        {
+            if(partitions[0].equals("define"))
+            {
+                String name = partitions[1];
+                String parameters = partitions[2];
+                String coms = partitions[3];
+
+                parameters = cleanUpOuterParenthesis(parameters, 1);
+                //No se si tenga que hacer algo mas..
+
+                ArrayList<String> commands = getComponents(coms);
+
+                for(String command: commands){
+                    command = cleanUpOuterParenthesis(command,1);
+                }
+
+                for(int i = 0 ; i < commands.size() ; ++i)
+                {
+                    if(!commandCheck(commands.get(i)))
+                    {
+                        valid = false;
+                    }
+                }
+                if(valid) userDefinedFunctions.add(name);
+            }
+        }
+        return valid;
     }
 
     /**
@@ -579,7 +614,15 @@ public class Interpreter {
 
     public static boolean userDefinedFunctionCheck(Keyword keyword){
         //TODO
-        return false;
+        boolean valid = false;
+        String[] partitions = keyword.getLexeme().split("");
+
+        if(partitions.length == 2)
+            for(String function : userDefinedFunctions)
+                if(partitions[0] == function) valid = true;
+
+
+        return valid;
     }
 
     //------------------------------------------------------------------------------------------------------------------

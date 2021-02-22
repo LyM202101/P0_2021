@@ -2,6 +2,8 @@ import Controller.Interpreter;
 import Controller.Lexer;
 import HelperClases.PairTuple;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,7 +30,7 @@ public class Console {
     /**
      * Contiene el path al archivo en el que estan las instrucciones para el robot
      */
-    public static final String FILEPATH = "";
+    public static final String FILEPATH = "Archivos/instrucciones.txt";
 
 
     /**
@@ -39,7 +41,12 @@ public class Console {
         //Variable donde se va a guardar el resultado de evaluacion de las instrucciones
         boolean isValid = false;
         //Extrae las instrucciones a un archivo
-        String instructions = readFile();
+        String instructions = null;
+        try {
+            instructions = readFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //Verifica que los parentesis esten blanceados en la totalidad de las instrucciones
         //Si los parentesis no estan balanceados el set de instrucciones es invalido. Si es valido toca hacer mas revisiones
@@ -69,19 +76,26 @@ public class Console {
      *
      * @return Un String que contiene las instrucciones dentro del archivo .txt de instrucciones
      */
-    public static String readFile() {
-        String instructions = "";
-
-        try(Stream<String> lines = Files.lines(Paths.get(FILEPATH)))
+    public static String readFile() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(FILEPATH));
+        String line = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        try
         {
-            instructions = lines.collect(Collectors.joining(""));
-            System.out.println(instructions);
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append(" ");
+            }
+
         }
         catch(IOException e)
         {
             e.printStackTrace();
         }
-        return instructions;
+        finally
+        {
+            reader.close();
+        }return stringBuilder.toString();
     }
 
 
