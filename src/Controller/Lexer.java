@@ -35,7 +35,8 @@ public class Lexer {
     public static ArrayList<Keyword> processRoutine(ArrayList<String> codeBlock) {
         ArrayList<Keyword> keywordList = new ArrayList<>();
         for (String block : codeBlock) {
-            keywordList.add(processCodeBlock(block));
+            Keyword processedKW = processCodeBlock(block);
+            keywordList.add(processedKW);
         }
         return keywordList;
     }
@@ -50,15 +51,22 @@ public class Lexer {
         String cleanedBlock = cleanedBlock(codeBlock);
 
         //Saca la palabra inicial del bloque de codigo (todas tienen un espacio que las separa del resto del bloque)
+        //String initialKeyword = cleanedBlock.substring(0,stopIndex).replaceAll(" ", "");
+
         String initialKeyword = cleanedBlock.split(" ")[0];
 
+        if(hasParenthesis(initialKeyword)){
+            int indexOfFirstParenthesis = cleanedBlock.indexOf("(");
+            initialKeyword = initialKeyword.substring(0,indexOfFirstParenthesis);
+        }
+
         //Encuentra cual tag debe tener el keyword
-        Tag keyTag = Keyword.findCmdTag(cleanedBlock);
+        Tag keyTag = Keyword.findCmdTag(initialKeyword);
 
         //Crea una keyword con el codeBlock original y su keytag correspondiente
-        Keyword blockKeyWord = new Keyword(cleanedBlock,keyTag );
+        Keyword blocKeyWord = new Keyword(cleanedBlock,keyTag );
 
-        return null;
+        return blocKeyWord;
     }
 
     /**
@@ -103,6 +111,15 @@ public class Lexer {
         return cleanedUpBlock;
     }
 
+    public static boolean hasParenthesis(String str){
+        for(int i = 0; i <str.length();i++){
+            char currChar = str.charAt(i);
+            if(currChar == '('){
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 }

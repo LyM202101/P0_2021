@@ -41,7 +41,8 @@ public class Console {
         //Variable donde se va a guardar el resultado de evaluacion de las instrucciones
         boolean isValid = false;
         //Extrae las instrucciones a un archivo
-        String instructions = "(walk 6)";
+        String instructions = "(rotate back)(if (not (blocked?) ) (walk 1) (NOP))(block(if (not (blocked?) ) (walk 1) (NOP))(rotate left))(define one 1)(define foo (c p)(block(drop c)(free p)(walk one)))(foo 1 3)(define goEnd()(if (not (blocked?))(block(walk 1)(goEnd))(NOP)))";
+
         /*try {
             instructions = readFile();
         } catch (IOException e) {
