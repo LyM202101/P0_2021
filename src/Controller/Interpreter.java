@@ -379,8 +379,7 @@ public class Interpreter {
     public static boolean conditionalCheck(String conditionStr){
         boolean valid = false;
 
-        if(containsConditional(conditionStr)){
-            String[] componentsConditional = conditionStr.split(" ");
+            String[] componentsConditional = (conditionStr.startsWith("not")) ? new String[]{"not", conditionStr.substring(conditionStr.indexOf("("), conditionStr.length())} :conditionStr.split(" ");
             String condition = componentsConditional[0];
             //condition =condition.trim().substring(1,condition.lastIndexOf(")"));
 
@@ -390,11 +389,7 @@ public class Interpreter {
                 case "can" -> valid = checkCan(componentsConditional);
                 case "not" -> valid = checkNot(componentsConditional);
             }
-        }
-
         return valid;
-
-
     }
 
     public static boolean checkBlocked(String[] componentsConditional){
@@ -516,8 +511,6 @@ public class Interpreter {
         //Revisar que esta correctamente definido
         if(name.matches("[a-zA-Z]+")){
             if(userDefinedFunctions.get(name) == null) {
-                instructionBlock = instructionBlock.trim();
-                if(commandCheck(instructionBlock)){
 
                     if(params.equals("()")){
                         numArgs = 0;
@@ -537,7 +530,6 @@ public class Interpreter {
                     valid = true;
 
 
-                }
 
             }
 

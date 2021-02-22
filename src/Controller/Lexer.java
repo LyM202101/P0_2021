@@ -53,7 +53,7 @@ public class Lexer {
         //Saca la palabra inicial del bloque de codigo (todas tienen un espacio que las separa del resto del bloque)
         //String initialKeyword = cleanedBlock.substring(0,stopIndex).replaceAll(" ", "");
 
-        String initialKeyword = cleanedBlock.split(" ")[0];
+        String initialKeyword = cleanedBlock.trim().split(" ")[0];
 
         if(hasParenthesis(initialKeyword)){
             int indexOfFirstParenthesis = cleanedBlock.indexOf("(");

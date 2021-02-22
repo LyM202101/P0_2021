@@ -40,9 +40,9 @@ public class Console {
     public static void main(String args[]) {
         //Variable donde se va a guardar el resultado de evaluacion de las instrucciones
         boolean isValid = false;
-        //Extrae las instrucciones a un archivo
-        String instructions = "(rotate back)(if (not (blocked?) ) (walk 1) (NOP))(block(if (not (blocked?) ) (walk 1) (NOP))(rotate left))(define one 1)(define foo (c p)(block(drop c)(free p)(walk one)))(foo 1 3)(define goEnd()(if (not (blocked?))(block(walk 1)(goEnd))(NOP)))";
 
+        //Extrae las instrucciones a un archivo
+        String instructions = "";
         /*try {
             instructions = readFile();
         } catch (IOException e) {
@@ -148,7 +148,7 @@ public class Console {
      * @return Un arrayList que contiene cada bloque de codigo en el set de instrucciones del archivo txt
      *
      * Aclaracion: Por bloque de codigo se esta definiendo a una expresion que tiene sus parentesis balanceados
-     * Ej Bloques de instrucciones: ( rotat e back ) , ( if (not (blocked?) ) (walk 1) ( nop ) ), ( define foo (c p) (block (drop c )( free p )(walk one ) ) )
+     * Ej Bloques de instrucciones: ( rotat e back ) , ( if (not (blocked?) ) (walk 1) ( NOP ) ), ( define foo (c p) (block (drop c )( free p )(walk one ) ) )
      */
 
     public static ArrayList<String> getInstructionBlocks(String str){
