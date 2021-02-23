@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -30,7 +31,7 @@ public class Console {
     /**
      * Contiene el path al archivo en el que estan las instrucciones para el robot
      */
-    public static final String FILEPATH = "Archivos/instrucciones.txt";
+    public static final String FILEPATH = "./Archivos/instrucciones.txt";
 
 
     /**
@@ -41,13 +42,11 @@ public class Console {
         //Variable donde se va a guardar el resultado de evaluacion de las instrucciones
         boolean isValid = false;
         //Extrae las instrucciones a un archivo
-        String instructions = "(walk 6)";
-        /*try {
-            instructions = readFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-*/
+
+        String instructions = readFile();
+
+        //System.out.println("el codigo es: " + instructions);
+
         //Verifica que los parentesis esten blanceados en la totalidad de las instrucciones
         //Si los parentesis no estan balanceados el set de instrucciones es invalido. Si es valido toca hacer mas revisiones
         if(checkForBalancedParenthesis(instructions)){
@@ -76,28 +75,23 @@ public class Console {
      *
      * @return Un String que contiene las instrucciones dentro del archivo .txt de instrucciones
      */
-    /* public static String readFile() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(FILEPATH));
-        String line = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        try
-        {
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append(" ");
+        public static String readFile() {
+            Path p = Paths.get("C:\\Users\\User PC\\Documents\\Santiago\\P0_2021\\src\\Archivos\\instrucciones.txt");
+
+            StringBuilder sb = new StringBuilder();
+
+            try (Stream<String> stream = Files.lines(p)) {
+                stream.forEach(s -> sb.append(s).append(" "));
+
+            } catch (IOException ex) {
+                // Handle exception
             }
 
+            String contents = sb.toString();
+            return contents;
         }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            reader.close();
-        }return stringBuilder.toString();
-    }
-*/
+
+
 
 
     /**
