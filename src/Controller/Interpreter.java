@@ -1,5 +1,7 @@
 package Controller;
 
+import HelperClases.TripleTuple;
+import HelperClases.UserFunction;
 import Tokens.Keyword;
 import Tokens.Tag;
 
@@ -10,9 +12,9 @@ import java.util.*;
  */
 public class Interpreter {
     /**
-     * En este arreglo se guardan las funciones definidas por el usuario
+     * En este hashmap se guardan las funciones definidas por el usuario. Tiene como llave el nombre de la funcion y como valor un objeto de UserFunction
      */
-    static final ArrayList<String> userDefinedFunctions = new ArrayList<>();
+    static final HashMap<String, UserFunction> userDefinedFunctions = new HashMap<>();
 
     /**
      * En este arreglo se guardan las variables definidas por el usuario
@@ -105,23 +107,16 @@ public class Interpreter {
 
             //BLOCK
             else if(currKeywordTag == Tag.BLOCK){
-                //TODO: Implementar metodo para deal with Block statements. Tiene que return bool
+                //Delegado a block statement check
                 valid = blockStatementCheck(currentKeyword);
             }
 
             //DEFINE FUNCTIONS AND VARIABLES
             else if(currKeywordTag == Tag.DEFINE){
-                //TODO: Implementar metodo para deal with DEFINE statements tanto para variables como funciones. Tiene que return bool
-
-                //Check pre eliminar de la estructura para ver si es la definicion de una funcion o la de una funcion
-
-                //NOTA: Una forma boba de revisar que se esta declarando es el numero de parentesis. Define de var solo puede tener 2, Define de funciones tiene que tener mas que 2
-
-                //NOTA: Tanto define function como define variable deben añadir a su respectivas listas / hash maps la funcion o variable para que se puedan reconocer cuando las llamen mas tarde en el programa
 
                 //DEFINE FUNCTION
                 if(countParenthesis(currInstructionBlock) > 2){
-                    //valid = defineFunctionCheck(currInstructionBlock,currentKeyword,currKeywordTag);
+                    valid = defineFunctionCheck(currInstructionBlock,currentKeyword);
                 }
                 //DEFINE VARIABLE
                 else{
@@ -131,13 +126,9 @@ public class Interpreter {
 
             //USER FUNCTIONS
 
-           /* NOTA: Cuando en el Block de commandos no se pudo encontrar un tag adecuado se agrupa bajo Tag.USER_FUN_VAR ya que se puede estar llamando a una user defined o function.
-            Por lo tanto en esos casos se tiene que revisar si existen vars o funciones con ese nombre. Si no existen entonces se concluye que no es valido el bloque y por lo tanto el programa no es valido.*/
-            else{
+           else{
                 //REVISAR SI EL NOMBRE ES EL DE UNA FUNCION CONOCIDA
-                //TODO: Implementar metodo para deal with possible User function calls y verificar que siga las especificaciones de esa funcion
-
-                //valid = userDefinedFunctionCheck(currInstructionBlock,currentKeyword,currKeywordTag);
+                valid = userDefinedFunctionCheck(currentKeyword);
             }
 
 
@@ -166,8 +157,6 @@ public class Interpreter {
 
         //Saca un arreglo de la version limpia del String
         String[] strArray = keyword.getLexeme().split(" ");
-        //Me saca el string del comando
-        String strCommand = strArray[0];
 
         //inicializa arreglo de parametros
         ArrayList<String> params = new ArrayList<>();
@@ -187,33 +176,15 @@ public class Interpreter {
 
 
         switch (tag) {
-            case WALK:
-                valid = checkWalk(params);
-                break;
-            case ROTATE:
-                valid = checkRotate(params);
-                break;
-            case LOOK:
-                valid = checkLook(params);
-                break;
-            case DROP:
-                valid = checkDrop( params) ;
-                break;
-            case FREE:
-                valid = checkFree( params);
-                break;
-            case PICK:
-                valid = checkPick( params);
-                break;
-            case GRAB:
-                valid = checkGrab(params);
-                break;
-            case WALK_TO:
-                valid = checkWalkTo(params) ;
-                break;
-            case NOP:
-                valid = (numArgs == 0)? false: checkNOP(keyword);
-                break;
+            case WALK -> valid = checkWalk(params);
+            case ROTATE -> valid = checkRotate(params);
+            case LOOK -> valid = checkLook(params);
+            case DROP -> valid = checkDrop(params);
+            case FREE -> valid = checkFree(params);
+            case PICK -> valid = checkPick(params);
+            case GRAB -> valid = checkGrab(params);
+            case WALK_TO -> valid = checkWalkTo(params);
+            case NOP -> valid = numArgs == 0 && checkNOP(keyword);
         }
         return valid;
 
@@ -408,30 +379,17 @@ public class Interpreter {
     public static boolean conditionalCheck(String conditionStr){
         boolean valid = false;
 
-        if(containsConditional(conditionStr)){
-            String[] componentsConditional = conditionStr.split(" ");
+            String[] componentsConditional = (conditionStr.startsWith("not")) ? new String[]{"not", conditionStr.substring(conditionStr.indexOf("("), conditionStr.length())} :conditionStr.split(" ");
             String condition = componentsConditional[0];
-
+            //condition =condition.trim().substring(1,condition.lastIndexOf(")"));
 
             switch (condition) {
-                case "blocked?":
-                    valid = checkBlocked(componentsConditional);
-                    break;
-                case "facing?":
-                    valid = checkFacing(componentsConditional);
-                    break;
-                case "can":
-                    valid = checkCan(componentsConditional);
-                    break;
-                case  "not":
-                    valid = checkNot(componentsConditional, conditionStr);
-                    break;
+                case "blocked?" -> valid = checkBlocked(componentsConditional);
+                case "facing?" -> valid = checkFacing(componentsConditional);
+                case "can" -> valid = checkCan(componentsConditional);
+                case "not" -> valid = checkNot(componentsConditional);
             }
-        }
-
         return valid;
-
-
     }
 
     public static boolean checkBlocked(String[] componentsConditional){
@@ -456,12 +414,10 @@ public class Interpreter {
 
     //TODO: REVISAR ESTO CON MUCHO CUIDADO DURANTE TESTING
     //Esto es recursivo. Cuando hay una cadena de nots esto se sigue intentando resolver rcursivamente hasta que la conduicion sea un con
-    public static boolean checkNot(String[] componentsConditional, String str){
+    public static boolean checkNot(String[] componentsConditional){
         boolean valid = false;
             if(componentsConditional.length == 2){
-                //El " " extra es por que substring es non inclusive del ultimo indice entonces si no estaria comiendose el ultimo parentesis
-                String clean = cleanUpOuterParenthesis(str,1) + " ";
-                clean = clean.substring(clean.indexOf("("),clean.lastIndexOf(")") + 1);
+                String clean = cleanUpOuterParenthesis(componentsConditional[1],1) + " ";
                 valid = conditionalCheck(clean);
             }
         return valid;
@@ -494,7 +450,7 @@ public class Interpreter {
         }
         //USER FUNCTIN
         if(containsUserFunction(commandStr)){
-            //TODO HACER LO DE USER DEFINED FUNCTIONS
+            //Delega checqueo a userDefinedFunction
             valid = userDefinedFunctionCheck(kwdCommand);
         }
         return valid;
@@ -515,11 +471,6 @@ public class Interpreter {
         //Saca el arreglo de commands
         ArrayList<String> commands = getComponents(commandsStr);
 
-        //Le quita los parentesis a commands dentro del arraylist
-        for(String command: commands){
-            command = cleanUpOuterParenthesis(command,1);
-        }
-
         //Itera a travez de commands para ir revisando la validez de cada uno individualmente
         //Si uno de los comands es falso entonces se sale del for y se declara como invalido todo el block statement
         for(int i = 0 ; i < commands.size() && valid; i++){
@@ -537,45 +488,84 @@ public class Interpreter {
     // DEFINE METHODS
     //------------------------------------------------------------------------------------------------------------------
 
-    public static boolean defineFunctionCheck(String instructionBlock,Keyword keyword, Tag tag){
-        //TODO
-        boolean valid = true;
-        int firstParenthesisIndex = keyword.getLexeme().indexOf("(");
-        int lastParenthesisIndex = keyword.getLexeme().lastIndexOf(")");
-        String defineFunction = instructionBlock.substring(firstParenthesisIndex, lastParenthesisIndex);
-        String[] partitions = keyword.getLexeme().split(" ");
 
-        ArrayList<String> userFunctions = new ArrayList<>();
+    public static boolean defineFunctionCheck(String instructionBlock,Keyword keyword){
+        boolean valid = false;
 
-        if(partitions.length == 4)
-        {
-            if(partitions[0].equals("define"))
-            {
-                String name = partitions[1];
-                String parameters = partitions[2];
-                String coms = partitions[3];
+        //define name (param) (cmd)
 
-                parameters = cleanUpOuterParenthesis(parameters, 1);
-                //No se si tenga que hacer algo mas..
+        //Saca el contenido de definir la funcion
+        String defFun = keyword.getLexeme();
 
-                ArrayList<String> commands = getComponents(coms);
+        //Saca nombre, params , comandos que definen a una funcion
+        TripleTuple<String,String,String> partition = processFunctionDefinition(defFun);
 
-                for(String command: commands){
-                    command = cleanUpOuterParenthesis(command,1);
-                }
 
-                for(int i = 0 ; i < commands.size() ; ++i)
-                {
-                    if(!commandCheck(commands.get(i)))
-                    {
-                        valid = false;
+        //Saca la informacion importante para defiir la funcion
+        String name = partition.getLeft();
+        String params = partition.getCenter();
+        String instructions = partition.getRight();
+
+        int numArgs;
+
+        //Revisar que esta correctamente definido
+        if(name.matches("[a-zA-Z]+")){
+            if(userDefinedFunctions.get(name) == null) {
+
+                    if(params.equals("()")){
+                        numArgs = 0;
                     }
-                }
-                if(valid) userDefinedFunctions.add(name);
+                    else{
+                        params = cleanUpOuterParenthesis(params.trim(),1);
+                        String[] paramsIndividuals = params.trim().replaceAll("[ +]", " ").split(" ");
+                        numArgs = paramsIndividuals.length;
+                    }
+
+                    //No me voy a molestar en revisar lo de los parametros correctos con el tipo de comando\
+
+
+                    //AQUI SE AÑADE UNA NUEVA FUNCION
+                    UserFunction usrFunct = new UserFunction(name, numArgs, instructions);
+                    userDefinedFunctions.put(name,usrFunct);
+                    valid = true;
+
+
+
             }
+
         }
+
         return valid;
     }
+
+
+    public static TripleTuple<String,String,String> processFunctionDefinition(String functionDef){
+
+        //Quita secuencias de whitespaces antes y despues del string y hace que todos los espacios solo sean " "
+        String cleanedFunctionDef = functionDef.trim().replaceAll(" +", " ");
+
+        //Saca indice del primer (
+        int firstRightParenthesis = cleanedFunctionDef.indexOf('(');
+
+        //Saca define name
+        String defAndName = cleanedFunctionDef.substring(0,firstRightParenthesis);
+
+        //Saca (params) (command)
+        String paramsAndCommand = cleanedFunctionDef.substring(firstRightParenthesis);
+        ArrayList<String> paramsAndCmd = getComponentBlocks(paramsAndCommand.trim());
+
+
+        //Sacar nombre, parametros y instrucciones
+        String name = defAndName.split(" ")[1];
+        String params = paramsAndCmd.get(0);
+        String instructions = paramsAndCmd.get(1);
+
+        return  new TripleTuple<>(name,params,instructions);
+
+
+    }
+
+
 
     /**
      * Define una nueva variable creada por el usuario que tenga el valor de un numero o una variable previamente definida
@@ -613,14 +603,24 @@ public class Interpreter {
     //------------------------------------------------------------------------------------------------------------------
 
     public static boolean userDefinedFunctionCheck(Keyword keyword){
-        //TODO
         boolean valid = false;
-        String[] partitions = keyword.getLexeme().split("");
+        String functionCall = keyword.getLexeme().trim().replaceAll(" +", " ");
+        String[] partition = functionCall.split(" ");
 
-        if(partitions.length == 2)
-            for(String function : userDefinedFunctions)
-                if(partitions[0] == function) valid = true;
+        String functionName = partition[0];
+        String[] parameters = Arrays.copyOfRange(partition, 1, (partition.length));
+        int paramNum = parameters.length;
 
+
+        for(String definedFunctions : userDefinedFunctions.keySet()){
+            //Check to see if any function mateches name
+            if(functionCall.startsWith(definedFunctions)){
+                //Check parameters and match
+                if(paramNum == userDefinedFunctions.get(definedFunctions).getNumOfParams()){
+                    valid = true;
+                }
+            }
+        }
 
         return valid;
     }
@@ -699,7 +699,6 @@ public class Interpreter {
         char rightParen = ')';
 
         int initialIndexCurrComp = 0;
-        int finalIndexCurrBlock = str.indexOf(')') ;
 
         ArrayList<String> setOfComponents = new ArrayList<>();
         Stack<Character> stack = new Stack<Character>();
@@ -713,7 +712,7 @@ public class Interpreter {
             else if (str.charAt(i) == rightParen) {
                 stack.pop();
             }
-            if(stack.isEmpty()){
+            if(stack.isEmpty() && !currChar.equals(" ")){
                 String currBlock = str.substring(initialIndexCurrComp, (i + 1));
                 initialIndexCurrComp = i + 1;
                 setOfComponents.add(currBlock);
@@ -736,12 +735,19 @@ public class Interpreter {
         );
         ArrayList<String> components = getComponentBlocks(subStringOfComponents);
 
+        ArrayList<String> cleanedArr = new ArrayList<>();
+
         //Limpia los parentesis de los componentes
         for(String comp : components){
             // El regex de [()] va a hace match con cualquiera ( o )
-            comp = comp.replaceAll("[()]", "");
+
+            comp = comp.trim();
+            int ins = comp.lastIndexOf(")");
+            comp = comp.substring(1,ins);
+            comp =comp.trim();
+            cleanedArr.add(comp);
         }
-        return  components;
+        return  cleanedArr;
     }
 
    public static boolean containsConditional(String str){
@@ -763,7 +769,7 @@ public class Interpreter {
     }
 
     public static boolean containsUserFunction(String str){
-        for(String funct: userDefinedFunctions){
+        for(String funct: userDefinedFunctions.keySet()){
             if(str.startsWith(funct)){
                 return true;
             }

@@ -41,11 +41,14 @@ public class Console {
     public static void main(String args[]) {
         //Variable donde se va a guardar el resultado de evaluacion de las instrucciones
         boolean isValid = false;
+
         //Extrae las instrucciones a un archivo
+
 
         String instructions = readFile();
 
         //System.out.println("el codigo es: " + instructions);
+
 
         //Verifica que los parentesis esten blanceados en la totalidad de las instrucciones
         //Si los parentesis no estan balanceados el set de instrucciones es invalido. Si es valido toca hacer mas revisiones
@@ -141,7 +144,7 @@ public class Console {
      * @return Un arrayList que contiene cada bloque de codigo en el set de instrucciones del archivo txt
      *
      * Aclaracion: Por bloque de codigo se esta definiendo a una expresion que tiene sus parentesis balanceados
-     * Ej Bloques de instrucciones: ( rotat e back ) , ( if (not (blocked?) ) (walk 1) ( nop ) ), ( define foo (c p) (block (drop c )( free p )(walk one ) ) )
+     * Ej Bloques de instrucciones: ( rotat e back ) , ( if (not (blocked?) ) (walk 1) ( NOP ) ), ( define foo (c p) (block (drop c )( free p )(walk one ) ) )
      */
 
     public static ArrayList<String> getInstructionBlocks(String str){
